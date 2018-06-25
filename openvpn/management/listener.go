@@ -19,15 +19,14 @@ package management
 
 import (
 	"bufio"
+	"fmt"
+	"github.com/mysterium/node/log"
+	"io"
 	"net"
 	"net/textproto"
+	"strings"
 	"sync"
 	"time"
-
-	"fmt"
-	log "github.com/cihub/seelog"
-	"io"
-	"strings"
 )
 
 // Addr struct represents local address on which listener waits for incoming management connections

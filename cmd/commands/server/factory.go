@@ -26,7 +26,7 @@ import (
 	"github.com/mysterium/node/identity"
 	"github.com/mysterium/node/ip"
 	"github.com/mysterium/node/location"
-	"github.com/mysterium/node/logconfig"
+	"github.com/mysterium/node/log"
 	"github.com/mysterium/node/nat"
 	"github.com/mysterium/node/openvpn"
 	"github.com/mysterium/node/openvpn/middlewares/server/auth"
@@ -56,7 +56,7 @@ func NewCommandWith(
 	ipResolver ip.Resolver,
 	natService nat.NATService,
 ) *Command {
-	logconfig.Bootstrap()
+	log.Bootstrap()
 
 	keystoreDirectory := filepath.Join(options.DirectoryData, "keystore")
 	keystoreInstance := keystore.NewKeyStore(keystoreDirectory, keystore.StandardScryptN, keystore.StandardScryptP)

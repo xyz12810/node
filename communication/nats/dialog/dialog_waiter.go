@@ -21,10 +21,10 @@ import (
 	"fmt"
 	"github.com/mysterium/node/communication"
 
-	log "github.com/cihub/seelog"
 	"github.com/mysterium/node/communication/nats"
 	"github.com/mysterium/node/communication/nats/discovery"
 	"github.com/mysterium/node/identity"
+	"github.com/mysterium/node/log"
 	dto_discovery "github.com/mysterium/node/service_discovery/dto"
 )
 

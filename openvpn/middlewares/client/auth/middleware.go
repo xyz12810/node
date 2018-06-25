@@ -18,7 +18,7 @@
 package auth
 
 import (
-	log "github.com/cihub/seelog"
+	"github.com/mysterium/node/log"
 	"github.com/mysterium/node/openvpn"
 	"github.com/mysterium/node/openvpn/management"
 	"regexp"

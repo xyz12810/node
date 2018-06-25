@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package logconfig
+package log
 
 import "github.com/cihub/seelog"
 
@@ -32,7 +32,9 @@ const seewayLogXmlConfig = `
 
 // Bootstrap loads log package into the overall system
 func Bootstrap() {
-	loggerRoot, err := seelog.LoggerFromConfigAsString(seewayLogXmlConfig)
+	var err error
+
+	loggerRoot, err = seelog.LoggerFromConfigAsString(seewayLogXmlConfig)
 	if err != nil {
 		panic("Error parsing seelog configuration. " + err.Error())
 	}

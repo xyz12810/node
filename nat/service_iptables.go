@@ -19,9 +19,8 @@ package nat
 
 import (
 	"fmt"
+	"github.com/mysterium/node/log"
 	"os/exec"
-
-	log "github.com/cihub/seelog"
 	"strings"
 )
 

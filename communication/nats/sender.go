@@ -22,7 +22,7 @@ import (
 	"time"
 
 	"fmt"
-	log "github.com/cihub/seelog"
+	"github.com/mysterium/node/log"
 )
 
 const senderLogPrefix = "[NATS.Sender] "

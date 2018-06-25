@@ -18,7 +18,6 @@
 package client
 
 import (
-	log "github.com/cihub/seelog"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/mysterium/node/client/connection"
 	node_cmd "github.com/mysterium/node/cmd"
@@ -28,7 +27,7 @@ import (
 	"github.com/mysterium/node/identity"
 	"github.com/mysterium/node/ip"
 	"github.com/mysterium/node/location"
-	"github.com/mysterium/node/logconfig"
+	"github.com/mysterium/node/log"
 	"github.com/mysterium/node/metadata"
 	"github.com/mysterium/node/openvpn"
 	"github.com/mysterium/node/openvpn/middlewares/client/bytescount"
@@ -53,7 +52,7 @@ func NewCommandWith(
 	options CommandOptions,
 	mysteriumClient server.Client,
 ) *Command {
-	logconfig.Bootstrap()
+	log.Bootstrap()
 	nats_discovery.Bootstrap()
 	openvpn.Bootstrap()
 
@@ -125,7 +124,7 @@ type Command struct {
 
 // Start starts Tequilapi service, fetches location
 func (cmd *Command) Start() error {
-	log.Infof("Starting Mysterium Client (%s)", metadata.VersionAsString())
+	log.Info("Starting Mysterium Client ", metadata.VersionAsString())
 
 	err := cmd.checkOpenvpn()
 	if err != nil {
@@ -149,7 +148,7 @@ func (cmd *Command) Start() error {
 		return err
 	}
 
-	log.Infof("Api started on: %d", port)
+	log.Info("Api started on ", port)
 
 	return nil
 }

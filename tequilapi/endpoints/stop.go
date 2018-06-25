@@ -18,8 +18,8 @@
 package endpoints
 
 import (
-	log "github.com/cihub/seelog"
 	"github.com/julienschmidt/httprouter"
+	"github.com/mysterium/node/log"
 	"net/http"
 )
 

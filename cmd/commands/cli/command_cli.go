@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"github.com/chzyer/readline"
 	node_cmd "github.com/mysterium/node/cmd"
-	"github.com/mysterium/node/logconfig"
+	"github.com/mysterium/node/log"
 	"github.com/mysterium/node/metadata"
 	tequilapi_client "github.com/mysterium/node/tequilapi/client"
 	"io"
@@ -33,7 +33,7 @@ func NewCommand(
 	historyFile string,
 	tequilapi *tequilapi_client.Client,
 ) *Command {
-	logconfig.Bootstrap()
+	log.Bootstrap()
 
 	return &Command{
 		historyFile: historyFile,
@@ -62,6 +62,7 @@ var versionSummary = metadata.VersionAsSummary(metadata.LicenseCopyright(
 // Run runs CLI interface synchronously, in the same thread while blocking it
 func (c *Command) Run() (err error) {
 	fmt.Println(versionSummary)
+	fmt.Println()
 
 	c.fetchedProposals = c.fetchProposals()
 	c.completer = newAutocompleter(c.tequilapi, c.fetchedProposals)

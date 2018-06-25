@@ -19,11 +19,10 @@ package openvpn
 
 import (
 	"bufio"
+	"github.com/mysterium/node/log"
+	"io"
 	"os/exec"
 	"sync"
-
-	log "github.com/cihub/seelog"
-	"io"
 	"syscall"
 )
 

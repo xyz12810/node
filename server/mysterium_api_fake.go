@@ -18,10 +18,9 @@
 package server
 
 import (
-	"github.com/mysterium/node/server/dto"
-
-	log "github.com/cihub/seelog"
 	"github.com/mysterium/node/identity"
+	"github.com/mysterium/node/log"
+	"github.com/mysterium/node/server/dto"
 	dto_discovery "github.com/mysterium/node/service_discovery/dto"
 )
 

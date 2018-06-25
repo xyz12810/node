@@ -19,11 +19,11 @@ package endpoints
 
 import (
 	"encoding/json"
-	log "github.com/cihub/seelog"
 	"github.com/julienschmidt/httprouter"
 	"github.com/mysterium/node/client/connection"
 	"github.com/mysterium/node/identity"
 	"github.com/mysterium/node/ip"
+	"github.com/mysterium/node/log"
 	"github.com/mysterium/node/openvpn/middlewares/client/bytescount"
 	"github.com/mysterium/node/tequilapi/utils"
 	"github.com/mysterium/node/tequilapi/validation"

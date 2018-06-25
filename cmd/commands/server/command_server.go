@@ -18,11 +18,11 @@
 package server
 
 import (
-	log "github.com/cihub/seelog"
 	"github.com/mysterium/node/communication"
 	"github.com/mysterium/node/identity"
 	"github.com/mysterium/node/ip"
 	"github.com/mysterium/node/location"
+	"github.com/mysterium/node/log"
 	"github.com/mysterium/node/metadata"
 	"github.com/mysterium/node/nat"
 	"github.com/mysterium/node/openvpn"
@@ -60,7 +60,7 @@ type Command struct {
 
 // Start starts server - does not block
 func (cmd *Command) Start() (err error) {
-	log.Infof("Starting Mysterium Server (%s)", metadata.VersionAsString())
+	log.Info("Starting Mysterium Server ", metadata.VersionAsString())
 
 	err = cmd.checkOpenvpn()
 	if err != nil {
@@ -158,7 +158,7 @@ func (cmd *Command) discoveryAnnouncementLoop(proposal dto_discovery.ServiceProp
 	for {
 		err := mysteriumClient.RegisterProposal(proposal, signer)
 		if err != nil {
-			log.Errorf("Failed to register proposal: %v, retrying after 1 min.", err)
+			log.Error("Failed to register proposal, retrying after 1 min. ", err)
 			time.Sleep(1 * time.Minute)
 		} else {
 			break

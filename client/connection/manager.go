@@ -19,9 +19,9 @@ package connection
 
 import (
 	"errors"
-	log "github.com/cihub/seelog"
 	"github.com/mysterium/node/communication"
 	"github.com/mysterium/node/identity"
+	"github.com/mysterium/node/log"
 	"github.com/mysterium/node/openvpn"
 	"github.com/mysterium/node/openvpn/middlewares/client/bytescount"
 	"github.com/mysterium/node/server"

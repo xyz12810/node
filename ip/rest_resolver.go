@@ -23,7 +23,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	log "github.com/cihub/seelog"
+	"github.com/mysterium/node/log"
 	"net"
 	"time"
 )

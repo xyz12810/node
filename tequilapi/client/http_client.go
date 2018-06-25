@@ -21,7 +21,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	log "github.com/cihub/seelog"
+	"github.com/mysterium/node/log"
 	"io/ioutil"
 	"net/http"
 	"net/url"

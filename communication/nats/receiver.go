@@ -22,7 +22,7 @@ import (
 	"github.com/nats-io/go-nats"
 
 	"fmt"
-	log "github.com/cihub/seelog"
+	"github.com/mysterium/node/log"
 )
 
 const receiverLogPrefix = "[NATS.Receiver] "

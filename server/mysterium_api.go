@@ -19,13 +19,12 @@ package server
 
 import (
 	"fmt"
-	"net/http"
-
-	log "github.com/cihub/seelog"
 	"github.com/mysterium/node/identity"
+	"github.com/mysterium/node/log"
 	"github.com/mysterium/node/requests"
 	"github.com/mysterium/node/server/dto"
 	dto_discovery "github.com/mysterium/node/service_discovery/dto"
+	"net/http"
 	"net/url"
 	"time"
 )
