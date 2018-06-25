@@ -21,10 +21,10 @@ import (
 	"fmt"
 	"github.com/chzyer/readline"
 	node_cmd "github.com/mysterium/node/cmd"
+	"github.com/mysterium/node/logconfig"
 	"github.com/mysterium/node/metadata"
 	tequilapi_client "github.com/mysterium/node/tequilapi/client"
 	"io"
-	"log"
 	"strings"
 )
 
@@ -33,6 +33,8 @@ func NewCommand(
 	historyFile string,
 	tequilapi *tequilapi_client.Client,
 ) *Command {
+	logconfig.Bootstrap()
+
 	return &Command{
 		historyFile: historyFile,
 		tequilapi:   tequilapi,
@@ -74,8 +76,6 @@ func (c *Command) Run() (err error) {
 	if err != nil {
 		return err
 	}
-	// TODO Should overtake output of CommandRun
-	log.SetOutput(c.reader.Stderr())
 
 	for {
 		line, err := c.reader.Readline()

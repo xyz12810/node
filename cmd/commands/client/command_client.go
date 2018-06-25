@@ -28,6 +28,7 @@ import (
 	"github.com/mysterium/node/identity"
 	"github.com/mysterium/node/ip"
 	"github.com/mysterium/node/location"
+	"github.com/mysterium/node/logconfig"
 	"github.com/mysterium/node/metadata"
 	"github.com/mysterium/node/openvpn"
 	"github.com/mysterium/node/openvpn/middlewares/client/bytescount"
@@ -52,6 +53,7 @@ func NewCommandWith(
 	options CommandOptions,
 	mysteriumClient server.Client,
 ) *Command {
+	logconfig.Bootstrap()
 	nats_discovery.Bootstrap()
 	openvpn.Bootstrap()
 
