@@ -175,5 +175,6 @@ func (cmd *Command) Kill() error {
 	cmd.httpAPIServer.Stop()
 	log.Info("Api stopped")
 
+	log.Flush()
 	return nil
 }

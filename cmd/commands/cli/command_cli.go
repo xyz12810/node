@@ -97,7 +97,13 @@ func (c *Command) Run() (err error) {
 // Kill stops cli
 func (c *Command) Kill() error {
 	c.reader.Clean()
-	return c.reader.Close()
+	err := c.reader.Close()
+	if err != nil {
+		return err
+	}
+
+	log.Flush()
+	return nil
 }
 
 func (c *Command) handleActions(line string) {

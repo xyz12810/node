@@ -150,8 +150,12 @@ func (cmd *Command) Kill() error {
 	}
 
 	err = cmd.natService.Stop()
+	if err != nil {
+		return err
+	}
 
-	return err
+	log.Flush()
+	return nil
 }
 
 func (cmd *Command) discoveryAnnouncementLoop(proposal dto_discovery.ServiceProposal, mysteriumClient server.Client, signer identity.Signer, stopPinger <-chan int) {

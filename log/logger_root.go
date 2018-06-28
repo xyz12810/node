@@ -17,7 +17,9 @@
 
 package log
 
-import "github.com/cihub/seelog"
+import (
+	"github.com/cihub/seelog"
+)
 
 var loggerRoot seelog.LoggerInterface
 
@@ -49,4 +51,9 @@ func Error(v ...interface{}) {
 // Critical formats and writes to log with level = Critical
 func Critical(v ...interface{}) {
 	loggerRoot.Critical(v...)
+}
+
+// Flush makes logger to output all messages
+func Flush() {
+	loggerRoot.Flush()
 }
