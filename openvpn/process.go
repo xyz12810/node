@@ -87,7 +87,7 @@ func (openvpn *openvpnProcess) Start() error {
 }
 
 func (openvpn *openvpnProcess) Wait() error {
-	return openvpn.cmd.Wait()
+	return openvpn.cmd.WaitForError()
 }
 
 func (openvpn *openvpnProcess) Stop() {

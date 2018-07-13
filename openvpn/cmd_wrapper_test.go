@@ -35,7 +35,7 @@ func TestWaitAndStopProcessDoesNotDeadLocks(t *testing.T) {
 	go func() {
 		assert.NoError(t, process.Start([]string{}))
 		processStarted.Done()
-		process.Wait()
+		process.WaitForError()
 		processWaitExited <- 1
 	}()
 	processStarted.Wait()
@@ -48,7 +48,7 @@ func TestWaitAndStopProcessDoesNotDeadLocks(t *testing.T) {
 	select {
 	case <-processWaitExited:
 	case <-time.After(100 * time.Millisecond):
-		assert.Fail(t, "CmdWrapper.Wait() didn't return in 100 miliseconds")
+		assert.Fail(t, "CmdWrapper.WaitForError() didn't return in 100 miliseconds")
 	}
 
 	select {
@@ -63,7 +63,7 @@ func TestWaitReturnsIfProcessDies(t *testing.T) {
 	processWaitExited := make(chan int, 1)
 
 	go func() {
-		process.Wait()
+		process.WaitForError()
 		processWaitExited <- 1
 	}()
 
@@ -71,6 +71,6 @@ func TestWaitReturnsIfProcessDies(t *testing.T) {
 	select {
 	case <-processWaitExited:
 	case <-time.After(500 * time.Millisecond):
-		assert.Fail(t, "CmdWrapper.Wait() didn't return on time")
+		assert.Fail(t, "CmdWrapper.WaitForError() didn't return on time")
 	}
 }

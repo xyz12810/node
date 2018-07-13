@@ -59,7 +59,7 @@ func (server *apiServer) Stop() {
 	server.listener.Close()
 }
 
-// Wait method waits for http server to finish handling requets (i.e. when Stop() was called)
+// WaitForError method waits for http server to finish handling requets (i.e. when Stop() was called)
 func (server *apiServer) Wait() error {
 	return <-server.errorChannel
 }

@@ -153,8 +153,8 @@ func (cmd *Command) Start() error {
 	return nil
 }
 
-// Wait blocks until tequilapi service is stopped
-func (cmd *Command) Wait() error {
+// WaitForError blocks until tequilapi service is stopped
+func (cmd *Command) WaitForError() error {
 	return cmd.httpAPIServer.Wait()
 }
 

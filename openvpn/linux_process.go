@@ -57,7 +57,7 @@ func (ls *linuxOpenvpnProcess) Start() error {
 
 func (ls *linuxOpenvpnProcess) Wait() error {
 	ls.finished.Wait()
-	log.Info(linuxProcess, "Wait finished")
+	log.Info(linuxProcess, "WaitForError finished")
 	return ls.processError
 }
 

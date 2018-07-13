@@ -78,8 +78,8 @@ func (cw *CmdWrapper) Start(arguments []string) (err error) {
 	return
 }
 
-// Wait function wait until executable exits and then returns exit error reported by executable
-func (cw *CmdWrapper) Wait() error {
+// WaitForError function wait until executable exits and then returns exit error reported by executable
+func (cw *CmdWrapper) WaitForError() error {
 	return <-cw.CmdExitError
 }
 

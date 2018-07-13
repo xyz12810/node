@@ -137,7 +137,7 @@ func (cmd *Command) Start() (err error) {
 	return nil
 }
 
-// Wait blocks until server is stopped
+// WaitForError blocks until server is stopped
 func (cmd *Command) Wait() error {
 	log.Info("Waiting for proposal announcements to finish")
 	cmd.proposalAnnouncementStopped.Wait()

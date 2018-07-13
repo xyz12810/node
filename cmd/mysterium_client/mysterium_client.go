@@ -82,7 +82,7 @@ func runCMD(options client.CommandOptions) {
 		os.Exit(1)
 	}
 
-	if err := cmdRun.Wait(); err != nil {
+	if err := cmdRun.WaitForError(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
