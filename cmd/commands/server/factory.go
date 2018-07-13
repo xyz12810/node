@@ -100,12 +100,12 @@ func NewCommandWith(
 			)
 		},
 
-		sessionManagerFactory: func(primitives *tls.Primitives, vpnServerIP string) session.Manager {
+		sessionManagerFactory: func(primitives *tls.Primitives, vpnServerIP string, vpnServerPort int) session.Manager {
 			// TODO: check options for --openvpn-transport option
 			clientConfigGenerator := openvpn.NewClientConfigGenerator(
 				primitives,
 				vpnServerIP,
-				options.OpenvpnPort,
+				vpnServerPort,
 				options.Protocol,
 			)
 
@@ -114,13 +114,16 @@ func NewCommandWith(
 				&session.UUIDGenerator{},
 			)
 		},
-		vpnServerFactory: func(manager session.Manager, primitives *tls.Primitives, callback state.Callback) openvpn.Process {
+		discoverPublicAddressAndPort: func() (string, int, error) {
+			return UPnpPunch(options.OpenvpnPort)
+		},
+		vpnServerFactory: func(manager session.Manager, primitives *tls.Primitives, callback state.Callback, listenOnPort int) openvpn.Process {
 			// TODO: check options for --openvpn-transport option
 			serverConfigGenerator := openvpn.NewServerConfigGenerator(
 				options.DirectoryRuntime,
 				options.DirectoryConfig,
 				primitives,
-				options.OpenvpnPort,
+				listenOnPort,
 				options.Protocol,
 			)
 

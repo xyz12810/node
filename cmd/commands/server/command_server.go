@@ -48,9 +48,10 @@ type Command struct {
 	dialogWaiterFactory func(identity identity.Identity) communication.DialogWaiter
 	dialogWaiter        communication.DialogWaiter
 
-	sessionManagerFactory func(primitives *tls.Primitives, serverIP string) session.Manager
+	sessionManagerFactory func(primitives *tls.Primitives, serverIP string, serverPort int) session.Manager
 
-	vpnServerFactory func(sessionManager session.Manager, primitives *tls.Primitives, openvpnStateCallback state.Callback) openvpn.Process
+	vpnServerFactory             func(sessionManager session.Manager, primitives *tls.Primitives, openvpnStateCallback state.Callback, listenOnPort int) openvpn.Process
+	discoverPublicAddressAndPort func() (string, int, error)
 
 	vpnServer                   openvpn.Process
 	checkOpenvpn                func() error
@@ -74,6 +75,11 @@ func (cmd *Command) Start() (err error) {
 
 	cmd.dialogWaiter = cmd.dialogWaiterFactory(providerID)
 	providerContact, err := cmd.dialogWaiter.Start()
+
+	externalIP, punchedPort, err := cmd.discoverPublicAddressAndPort()
+	if err != nil {
+		return err
+	}
 
 	// if for some reason we will need truly external IP, use GetPublicIP()
 	vpnServerIP, err := cmd.ipResolver.GetOutboundIP()
@@ -105,7 +111,7 @@ func (cmd *Command) Start() (err error) {
 		return err
 	}
 
-	sessionManager := cmd.sessionManagerFactory(primitives, vpnServerIP)
+	sessionManager := cmd.sessionManagerFactory(primitives, externalIP, punchedPort)
 
 	dialogHandler := session.NewDialogHandler(proposal.ID, sessionManager)
 	if err := cmd.dialogWaiter.ServeDialogs(dialogHandler); err != nil {
@@ -124,7 +130,7 @@ func (cmd *Command) Start() (err error) {
 			close(stopDiscoveryAnnouncement)
 		}
 	}
-	cmd.vpnServer = cmd.vpnServerFactory(sessionManager, primitives, vpnStateCallback)
+	cmd.vpnServer = cmd.vpnServerFactory(sessionManager, primitives, vpnStateCallback, punchedPort)
 	if err := cmd.vpnServer.Start(); err != nil {
 		return err
 	}
