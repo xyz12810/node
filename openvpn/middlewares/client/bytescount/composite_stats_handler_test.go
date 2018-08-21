@@ -21,13 +21,14 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/mysterium/node/openvpn"
 	"github.com/stretchr/testify/assert"
 )
 
-var stats = SessionStats{BytesSent: 1, BytesReceived: 1}
+var stats = openvpn.SessionStats{BytesSent: 1, BytesReceived: 1}
 
 func TestCompositeHandlerWithNoHandlers(t *testing.T) {
-	stats := SessionStats{BytesSent: 1, BytesReceived: 1}
+	stats := openvpn.SessionStats{BytesSent: 1, BytesReceived: 1}
 
 	compositeHandler := NewCompositeStatsHandler()
 	assert.NoError(t, compositeHandler(stats))
@@ -41,7 +42,7 @@ func TestCompositeHandlerWithSuccessfulHandler(t *testing.T) {
 }
 
 func TestCompositeHandlerWithFailingHandler(t *testing.T) {
-	failingHandler := func(stats SessionStats) error { return errors.New("fake error") }
+	failingHandler := func(stats openvpn.SessionStats) error { return errors.New("fake error") }
 	compositeHandler := NewCompositeStatsHandler(failingHandler)
 	assert.Error(t, compositeHandler(stats), "fake error")
 }

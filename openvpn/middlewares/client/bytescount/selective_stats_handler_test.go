@@ -21,13 +21,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/mysterium/node/openvpn"
 	"github.com/mysterium/node/utils"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewSelectiveStatsHandlerEach(t *testing.T) {
 	statsRecorder := fakeStatsRecorder{}
-	stats := SessionStats{
+	stats := openvpn.SessionStats{
 		BytesSent:     1,
 		BytesReceived: 2,
 	}
@@ -44,11 +45,11 @@ func TestNewSelectiveStatsHandlerEveryTheeSeconds(t *testing.T) {
 	statsRecorder := fakeStatsRecorder{}
 	handler, _ := NewIntervalStatsHandler(statsRecorder.record, clock.GetTime, 3*time.Second)
 
-	stats := SessionStats{
+	stats := openvpn.SessionStats{
 		BytesSent:     1,
 		BytesReceived: 2,
 	}
-	emptyStats := SessionStats{}
+	emptyStats := openvpn.SessionStats{}
 
 	// first call executes handler
 	handler(stats)

@@ -29,6 +29,7 @@ import (
 	"github.com/mysterium/node/client/connection"
 	"github.com/mysterium/node/identity"
 	"github.com/mysterium/node/ip"
+	"github.com/mysterium/node/openvpn"
 	"github.com/mysterium/node/openvpn/middlewares/client/bytescount"
 	"github.com/mysterium/node/utils"
 	"github.com/stretchr/testify/assert"
@@ -330,7 +331,7 @@ func TestGetIPEndpointReturnsErrorWhenIPDetectionFails(t *testing.T) {
 func TestGetStatisticsEndpointReturnsStatistics(t *testing.T) {
 	settableClock := utils.SettableClock{}
 	statsKeeper := bytescount.NewSessionStatsKeeper(settableClock.GetTime)
-	stats := bytescount.SessionStats{BytesSent: 1, BytesReceived: 2}
+	stats := openvpn.SessionStats{BytesSent: 1, BytesReceived: 2}
 	statsKeeper.Save(stats)
 
 	sessionStart := time.Date(2000, time.January, 0, 10, 0, 0, 0, time.UTC)
@@ -357,7 +358,7 @@ func TestGetStatisticsEndpointReturnsStatistics(t *testing.T) {
 func TestGetStatisticsEndpointReturnsStatisticsWhenSessionIsNotStarted(t *testing.T) {
 	settableClock := utils.SettableClock{}
 	statsKeeper := bytescount.NewSessionStatsKeeper(settableClock.GetTime)
-	stats := bytescount.SessionStats{BytesSent: 1, BytesReceived: 2}
+	stats := openvpn.SessionStats{BytesSent: 1, BytesReceived: 2}
 	statsKeeper.Save(stats)
 
 	manager := fakeManager{}

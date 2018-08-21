@@ -26,8 +26,6 @@ import (
 	"github.com/mysterium/node/communication"
 	"github.com/mysterium/node/identity"
 	"github.com/mysterium/node/openvpn"
-	"github.com/mysterium/node/openvpn/middlewares/client/bytescount"
-	"github.com/mysterium/node/openvpn/middlewares/state"
 	"github.com/mysterium/node/server"
 	"github.com/mysterium/node/service_discovery/dto"
 	"github.com/mysterium/node/session"
@@ -92,7 +90,7 @@ func (tc *testContext) SetupTest() {
 	}
 
 	tc.openvpnCreationError = nil
-	fakeVpnClientFactory := func(vpnSession session.SessionDto, consumerID identity.Identity, providerID identity.Identity, callback state.Callback) (openvpn.Process, error) {
+	fakeVpnClientFactory := func(vpnSession session.SessionDto, consumerID identity.Identity, providerID identity.Identity, callback openvpn.Callback) (openvpn.Process, error) {
 		tc.RLock()
 		defer tc.RUnlock()
 		//each test can set this value to simulate openvpn creation error, this flag is reset BEFORE each test
@@ -267,7 +265,7 @@ type fakeOpenvpnClient struct {
 	onStartReturnError  error
 	onStartReportStates []openvpn.State
 	onStopReportStates  []openvpn.State
-	stateCallback       state.Callback
+	stateCallback       openvpn.Callback
 	fakeProcess         sync.WaitGroup
 
 	sync.RWMutex
@@ -307,7 +305,7 @@ func (foc *fakeOpenvpnClient) reportState(state openvpn.State) {
 	foc.stateCallback(state)
 }
 
-func (foc *fakeOpenvpnClient) StateCallback(callback state.Callback) {
+func (foc *fakeOpenvpnClient) StateCallback(callback openvpn.Callback) {
 	foc.Lock()
 	defer foc.Unlock()
 
@@ -363,11 +361,11 @@ type fakeSessionStatsKeeper struct {
 	sessionStartMarked, sessionEndMarked bool
 }
 
-func (fsk *fakeSessionStatsKeeper) Save(stats bytescount.SessionStats) {
+func (fsk *fakeSessionStatsKeeper) Save(stats openvpn.SessionStats) {
 }
 
-func (fsk *fakeSessionStatsKeeper) Retrieve() bytescount.SessionStats {
-	return bytescount.SessionStats{}
+func (fsk *fakeSessionStatsKeeper) Retrieve() openvpn.SessionStats {
+	return openvpn.SessionStats{}
 }
 
 func (fsk *fakeSessionStatsKeeper) MarkSessionStart() {
