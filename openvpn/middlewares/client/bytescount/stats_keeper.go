@@ -18,13 +18,14 @@
 package bytescount
 
 import (
+	"github.com/mysterium/node/openvpn"
 	"time"
 )
 
 // SessionStatsKeeper keeps session stats
 type SessionStatsKeeper interface {
-	Save(stats SessionStats)
-	Retrieve() SessionStats
+	Save(stats openvpn.SessionStats)
+	Retrieve() openvpn.SessionStats
 	MarkSessionStart()
 	GetSessionDuration() time.Duration
 	MarkSessionEnd()
@@ -34,7 +35,7 @@ type SessionStatsKeeper interface {
 type TimeGetter func() time.Time
 
 type sessionStatsKeeper struct {
-	sessionStats SessionStats
+	sessionStats openvpn.SessionStats
 	timeGetter   TimeGetter
 	sessionStart *time.Time
 }
@@ -45,12 +46,12 @@ func NewSessionStatsKeeper(timeGetter TimeGetter) SessionStatsKeeper {
 }
 
 // Save saves session stats to keeper
-func (keeper *sessionStatsKeeper) Save(stats SessionStats) {
+func (keeper *sessionStatsKeeper) Save(stats openvpn.SessionStats) {
 	keeper.sessionStats = stats
 }
 
 // Retrieve retrieves session stats from keeper
-func (keeper *sessionStatsKeeper) Retrieve() SessionStats {
+func (keeper *sessionStatsKeeper) Retrieve() openvpn.SessionStats {
 	return keeper.sessionStats
 }
 

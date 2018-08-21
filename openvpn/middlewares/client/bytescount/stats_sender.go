@@ -19,6 +19,7 @@ package bytescount
 
 import (
 	"github.com/mysterium/node/identity"
+	"github.com/mysterium/node/openvpn"
 	"github.com/mysterium/node/server"
 	"github.com/mysterium/node/server/dto"
 	"github.com/mysterium/node/session"
@@ -28,9 +29,9 @@ import (
 type SessionStatsSender func(bytesSent, bytesReceived int) error
 
 // NewSessionStatsSender returns new session stats handler, which sends statistics to server
-func NewSessionStatsSender(mysteriumClient server.Client, sessionID session.SessionID, providerID identity.Identity, signer identity.Signer, ConsumerCountry string) SessionStatsHandler {
+func NewSessionStatsSender(mysteriumClient server.Client, sessionID session.SessionID, providerID identity.Identity, signer identity.Signer, ConsumerCountry string) openvpn.SessionStatsHandler {
 	sessionIDString := string(sessionID)
-	return func(sessionStats SessionStats) error {
+	return func(sessionStats openvpn.SessionStats) error {
 		return mysteriumClient.SendSessionStats(
 			sessionIDString,
 			dto.SessionStats{

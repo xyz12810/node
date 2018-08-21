@@ -26,18 +26,15 @@ import (
 	"github.com/mysterium/node/openvpn/management"
 )
 
-// Callback is called when openvpn process state changes
-type Callback func(state openvpn.State)
-
 const stateEventPrefix = ">STATE:"
 const stateOutputMatcher = "^\\d+,([a-zA-Z_]+),.*$"
 
 type middleware struct {
-	listeners []Callback
+	listeners []openvpn.Callback
 }
 
 // NewMiddleware creates state middleware for given list of callback listeners
-func NewMiddleware(listeners ...Callback) management.Middleware {
+func NewMiddleware(listeners ...openvpn.Callback) management.Middleware {
 	return &middleware{
 		listeners: listeners,
 	}
@@ -80,7 +77,7 @@ func (middleware *middleware) ConsumeLine(line string) (bool, error) {
 	return true, nil
 }
 
-func (middleware *middleware) Subscribe(listener Callback) {
+func (middleware *middleware) Subscribe(listener openvpn.Callback) {
 	middleware.listeners = append(middleware.listeners, listener)
 }
 

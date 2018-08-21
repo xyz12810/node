@@ -25,11 +25,8 @@ import (
 	"github.com/mysterium/node/openvpn/management"
 )
 
-// CredentialsProvider returns client's current auth primitives (i.e. customer identity signature / node's sessionId)
-type CredentialsProvider func() (username string, password string, err error)
-
 type middleware struct {
-	fetchCredentials CredentialsProvider
+	fetchCredentials openvpn.CredentialsProvider
 	commandWriter    management.CommandWriter
 	lastUsername     string
 	lastPassword     string
@@ -37,7 +34,7 @@ type middleware struct {
 }
 
 // NewMiddleware creates client user_auth challenge authentication middleware
-func NewMiddleware(credentials CredentialsProvider) *middleware {
+func NewMiddleware(credentials openvpn.CredentialsProvider) *middleware {
 	return &middleware{
 		fetchCredentials: credentials,
 		commandWriter:    nil,

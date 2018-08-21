@@ -22,21 +22,19 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/mysterium/node/openvpn"
 	"github.com/mysterium/node/openvpn/management"
 )
-
-// SessionStatsHandler is invoked when middleware receives statistics
-type SessionStatsHandler func(SessionStats) error
 
 const byteCountCommandTemplate = "bytecount %d"
 
 type middleware struct {
-	sessionStatsHandler SessionStatsHandler
+	sessionStatsHandler openvpn.SessionStatsHandler
 	interval            time.Duration
 }
 
 // NewMiddleware returns new bytescount middleware
-func NewMiddleware(sessionStatsHandler SessionStatsHandler, interval time.Duration) management.Middleware {
+func NewMiddleware(sessionStatsHandler openvpn.SessionStatsHandler, interval time.Duration) management.Middleware {
 	return &middleware{
 		sessionStatsHandler: sessionStatsHandler,
 		interval:            interval,
@@ -75,7 +73,7 @@ func (middleware *middleware) ConsumeLine(line string) (consumed bool, err error
 		return
 	}
 
-	stats := SessionStats{BytesSent: bytesOut, BytesReceived: bytesIn}
+	stats := openvpn.SessionStats{BytesSent: bytesOut, BytesReceived: bytesIn}
 	err = middleware.sessionStatsHandler(stats)
 
 	return

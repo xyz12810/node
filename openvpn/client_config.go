@@ -83,8 +83,8 @@ func NewClientConfigFromSession(vpnConfig *VPNConfig, configDir string, runtimeD
 	clientFileConfig := newClientConfig(runtimeDir, configDir)
 	clientFileConfig.SetClientMode(vpnConfig.RemoteIP, vpnConfig.RemotePort)
 	clientFileConfig.SetProtocol(vpnConfig.RemoteProtocol)
-	clientFileConfig.SetTLSCACertificate(vpnConfig.CACertificate)
 	clientFileConfig.SetTLSCrypt(vpnConfig.TLSPresharedKey)
+	clientFileConfig.SetTLSCACertificate(vpnConfig.CACertificate)
 
 	return clientFileConfig, nil
 }

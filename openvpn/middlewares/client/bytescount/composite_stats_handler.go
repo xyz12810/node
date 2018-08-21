@@ -17,9 +17,11 @@
 
 package bytescount
 
+import "github.com/mysterium/node/openvpn"
+
 // NewCompositeStatsHandler composes multiple stats handlers into single one, which executes all handlers sequentially
-func NewCompositeStatsHandler(statsHandlers ...SessionStatsHandler) SessionStatsHandler {
-	return func(stats SessionStats) error {
+func NewCompositeStatsHandler(statsHandlers ...openvpn.SessionStatsHandler) openvpn.SessionStatsHandler {
+	return func(stats openvpn.SessionStats) error {
 		for _, handler := range statsHandlers {
 			err := handler(stats)
 			if err != nil {

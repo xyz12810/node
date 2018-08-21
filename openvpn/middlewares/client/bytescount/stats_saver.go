@@ -17,9 +17,11 @@
 
 package bytescount
 
+import "github.com/mysterium/node/openvpn"
+
 // NewSessionStatsSaver returns stats handler, which saves stats stats keeper
-func NewSessionStatsSaver(statsKeeper SessionStatsKeeper) SessionStatsHandler {
-	return func(sessionStats SessionStats) error {
+func NewSessionStatsSaver(statsKeeper SessionStatsKeeper) openvpn.SessionStatsHandler {
+	return func(sessionStats openvpn.SessionStats) error {
 		statsKeeper.Save(sessionStats)
 		return nil
 	}

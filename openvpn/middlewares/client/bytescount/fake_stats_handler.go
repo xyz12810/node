@@ -17,11 +17,13 @@
 
 package bytescount
 
+import "github.com/mysterium/node/openvpn"
+
 type fakeStatsRecorder struct {
-	LastSessionStats SessionStats
+	LastSessionStats openvpn.SessionStats
 }
 
-func (sender *fakeStatsRecorder) record(sessionStats SessionStats) error {
+func (sender *fakeStatsRecorder) record(sessionStats openvpn.SessionStats) error {
 	sender.LastSessionStats = sessionStats
 	return nil
 }

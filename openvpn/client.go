@@ -18,15 +18,9 @@
 package openvpn
 
 import (
-	"github.com/mysterium/node/openvpn/management"
 	"github.com/mysterium/node/openvpn/tls"
 	"github.com/mysterium/node/session"
 )
-
-// NewClient creates openvpn client with given config params
-func NewClient(openvpnBinary string, config *ClientConfig, middlewares ...management.Middleware) Process {
-	return CreateNewProcess(openvpnBinary, config.GenericConfig, middlewares...)
-}
 
 //VPNConfig structure represents VPN configuration options for given session
 type VPNConfig struct {
