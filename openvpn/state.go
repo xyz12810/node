@@ -62,3 +62,6 @@ const ProcessExited = State("PROCESS_EXITED")
 // UnknownState is reported when state middleware cannot parse state from string (i.e. it's undefined in list above),
 // usually that means that newer openvpn version reports something extra
 const UnknownState = State("UNKNOWN")
+
+// Callback is called when openvpn process state changes
+type Callback func(state State)
