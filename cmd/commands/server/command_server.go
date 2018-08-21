@@ -53,7 +53,7 @@ type Command struct {
 
 	sessionManagerFactory func(primitives *tls.Primitives, serverIP string) session.Manager
 
-	vpnServerFactory func(sessionManager session.Manager, primitives *tls.Primitives, openvpnStateCallback openvpn.Callback) openvpn.Process
+	vpnServerFactory func(sessionManager session.Manager, primitives *tls.Primitives, openvpnStateCallback openvpn.StateCallback) openvpn.Process
 
 	vpnServer                   openvpn.Process
 	checkOpenvpn                func() error

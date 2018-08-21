@@ -38,7 +38,7 @@ func ConfigureVpnClientFactory(
 	statsKeeper bytescount.SessionStatsKeeper,
 	originalLocationCache location.Cache,
 ) VpnClientCreator {
-	return func(vpnSession session.SessionDto, consumerID identity.Identity, providerID identity.Identity, stateCallback openvpn.Callback) (openvpn.Process, error) {
+	return func(vpnSession session.SessionDto, consumerID identity.Identity, providerID identity.Identity, stateCallback openvpn.StateCallback) (openvpn.Process, error) {
 		var receivedConfig openvpn.VPNConfig
 		err := json.Unmarshal(vpnSession.Config, &receivedConfig)
 		if err != nil {
@@ -85,7 +85,7 @@ func ConfigureVpnClientFactory(
 	}
 }
 
-func channelToStateCallbackAdapter(channel chan openvpn.State) openvpn.Callback {
+func channelToStateCallbackAdapter(channel chan openvpn.State) openvpn.StateCallback {
 	return func(state openvpn.State) {
 		channel <- state
 		if state == openvpn.ProcessExited {

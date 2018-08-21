@@ -1,5 +1,22 @@
 // +build darwin
 
+/*
+ * Copyright (C) 2017 The "MysteriumNetwork/node" Authors.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package openvpn
 
 import (
@@ -11,7 +28,7 @@ import (
 const openvpn3SessionPrefx = "[openvpn3 session] "
 
 // NewClient creates openvpn client with given config params
-func NewClient(openvpnBinary string, config *ClientConfig, stateHandler Callback, statsHandler SessionStatsHandler, credentialsProvider CredentialsProvider) Process {
+func NewClient(openvpnBinary string, config *ClientConfig, stateHandler StateCallback, statsHandler SessionStatsHandler, credentialsProvider CredentialsProvider) Process {
 	return &openvpn3Session{
 		ovpn3: openvpn3.NewSession(&openvpn3Callbacks{
 			stateCallback: stateHandler,
@@ -27,7 +44,7 @@ type openvpn3Session struct {
 	ovpn3         *openvpn3.Session
 	config        *ClientConfig
 	credsProvider CredentialsProvider
-	stateCallback Callback
+	stateCallback StateCallback
 }
 
 func (session *openvpn3Session) Start() error {
@@ -59,7 +76,7 @@ func (session *openvpn3Session) Stop() {
 var _ Process = &openvpn3Session{}
 
 type openvpn3Callbacks struct {
-	stateCallback Callback
+	stateCallback StateCallback
 	statsHandler  SessionStatsHandler
 }
 

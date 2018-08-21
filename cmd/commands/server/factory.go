@@ -99,7 +99,7 @@ func NewCommand(options CommandOptions) *Command {
 				&session.UUIDGenerator{},
 			)
 		},
-		vpnServerFactory: func(manager session.Manager, primitives *tls.Primitives, callback openvpn.Callback) openvpn.Process {
+		vpnServerFactory: func(manager session.Manager, primitives *tls.Primitives, callback openvpn.StateCallback) openvpn.Process {
 			// TODO: check options for --openvpn-transport option
 			serverConfigGenerator := openvpn.NewServerConfigGenerator(
 				options.Directories.Runtime,

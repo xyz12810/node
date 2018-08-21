@@ -30,11 +30,11 @@ const stateEventPrefix = ">STATE:"
 const stateOutputMatcher = "^\\d+,([a-zA-Z_]+),.*$"
 
 type middleware struct {
-	listeners []openvpn.Callback
+	listeners []openvpn.StateCallback
 }
 
 // NewMiddleware creates state middleware for given list of callback listeners
-func NewMiddleware(listeners ...openvpn.Callback) management.Middleware {
+func NewMiddleware(listeners ...openvpn.StateCallback) management.Middleware {
 	return &middleware{
 		listeners: listeners,
 	}
@@ -77,7 +77,7 @@ func (middleware *middleware) ConsumeLine(line string) (bool, error) {
 	return true, nil
 }
 
-func (middleware *middleware) Subscribe(listener openvpn.Callback) {
+func (middleware *middleware) Subscribe(listener openvpn.StateCallback) {
 	middleware.listeners = append(middleware.listeners, listener)
 }
 

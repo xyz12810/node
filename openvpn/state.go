@@ -63,5 +63,5 @@ const ProcessExited = State("PROCESS_EXITED")
 // usually that means that newer openvpn version reports something extra
 const UnknownState = State("UNKNOWN")
 
-// Callback is called when openvpn process state changes
-type Callback func(state State)
+// StateCallback is called when openvpn process state changes
+type StateCallback func(state State)
