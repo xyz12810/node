@@ -61,10 +61,18 @@
   name = "github.com/stretchr/testify"
   version = "1.2.2"
 
+[[constraint]]
+  name = "github.com/MysteriumNetwork/openvpn3-go-bindings"
+  version = "0.0.2"
+
 [prune]
   go-tests = true
   unused-packages = true
 
   [[prune.project]]
     name = "github.com/ethereum/go-ethereum"
+    unused-packages = false
+
+  [[prune.project]]
+    name = "github.com/MysteriumNetwork/openvpn3-go-bindings"
     unused-packages = false

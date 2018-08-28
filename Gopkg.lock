@@ -2,7 +2,15 @@
 
 
 [[projects]]
-  digest = "1:0626d6801a7c1020d4586c9aa950638eab7b71fb7e4d8a18514f18b3dddf51be"
+  digest = "1:4f894da8f0f3ed97820f0ee45a468aab9ed3ccc26f91ca6b03613b3d85f7bc6f"
+  name = "github.com/MysteriumNetwork/openvpn3-go-bindings"
+  packages = ["openvpn3"]
+  pruneopts = "T"
+  revision = "322855129564bc812e4e158784d93aaaa89c4456"
+  version = "v0.0.2"
+
+[[projects]]
+  digest = "1:b4577772bd3b54569d18fb2c3d7fa120cc30d6707638a137a7582019fc89c456"
   name = "github.com/MysteriumNetwork/payments"
   packages = [
     "cli/helpers",
@@ -13,8 +21,8 @@
     "registry/generated",
   ]
   pruneopts = "UT"
-  revision = "6fd859db4476d7a7630b88210b3b3ffc874dcf4d"
-  version = "v0.0.4-beta"
+  revision = "0aaddad6b08e57d0d110ddf5d9a977965fe79b66"
+  version = "0.0.5-beta"
 
 [[projects]]
   digest = "1:7d191fd0c54ff370eaf6116a14dafe2a328df487baea280699f597aae858d00d"
@@ -365,6 +373,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/MysteriumNetwork/openvpn3-go-bindings/openvpn3",
     "github.com/MysteriumNetwork/payments/cli/helpers",
     "github.com/MysteriumNetwork/payments/identity",
     "github.com/MysteriumNetwork/payments/mysttoken/generated",
