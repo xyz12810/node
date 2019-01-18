@@ -24,16 +24,20 @@ import (
 	"github.com/mysteriumnetwork/node/tequilapi"
 )
 
+type StartNATPing func() error
+
 // NewNode function creates new Mysterium node by given options
 func NewNode(
 	connectionManager connection.Manager,
 	tequilapiServer tequilapi.APIServer,
 	originalLocationCache location.Cache,
+	startNATPing StartNATPing,
 ) *Node {
 	return &Node{
 		connectionManager:     connectionManager,
 		httpAPIServer:         tequilapiServer,
 		originalLocationCache: originalLocationCache,
+		startNATPing:          startNATPing,
 	}
 }
 
@@ -42,6 +46,7 @@ type Node struct {
 	connectionManager     connection.Manager
 	httpAPIServer         tequilapi.APIServer
 	originalLocationCache location.Cache
+	startNATPing          StartNATPing
 }
 
 // Start starts Mysterium node (Tequilapi service, fetches location)
@@ -64,6 +69,11 @@ func (node *Node) Start() error {
 	}
 
 	log.Infof("Api started on: %v", address)
+
+	err = node.startNATPing()
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

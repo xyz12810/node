@@ -70,12 +70,14 @@ func NewManager(
 	idGenerator IDGenerator,
 	sessionStorage Storage,
 	promiseProcessor PromiseProcessor,
+	natPingerChan func() chan json.RawMessage,
 ) *Manager {
 	return &Manager{
 		currentProposal:  currentProposal,
 		generateID:       idGenerator,
 		sessionStorage:   sessionStorage,
 		promiseProcessor: promiseProcessor,
+		natPingerChan:    natPingerChan,
 
 		creationLock: sync.Mutex{},
 	}
@@ -88,12 +90,13 @@ type Manager struct {
 	provideConfig    ConfigProvider
 	sessionStorage   Storage
 	promiseProcessor PromiseProcessor
+	natPingerChan    func() chan json.RawMessage
 
 	creationLock sync.Mutex
 }
 
 // Create creates session instance. Multiple sessions per peerID is possible in case different services are used
-func (manager *Manager) Create(consumerID identity.Identity, proposalID int, config ServiceConfiguration, destroyCallback DestroyCallback) (sessionInstance Session, err error) {
+func (manager *Manager) Create(consumerID identity.Identity, proposalID int, config ServiceConfiguration, destroyCallback DestroyCallback, requestConfig json.RawMessage) (sessionInstance Session, err error) {
 	manager.creationLock.Lock()
 	defer manager.creationLock.Unlock()
 
@@ -112,6 +115,15 @@ func (manager *Manager) Create(consumerID identity.Identity, proposalID int, con
 		return
 	}
 
+	// start NAT pinger here, do not block - configuration should be returned to consumer
+	// start NAT pinger, get hole punched, launch service.
+	//  on session-destroy - shutdown service and wait for session-create
+	// TODO: We might want to start a separate openvpn daemon if node is behind the NAT
+
+	// We need to know that session creation is already in-progress here
+
+	// postpone vpnServer start until NAT hole is punched
+	manager.notifyNATPinger(requestConfig)
 	sessionInstance.DestroyCallback = destroyCallback
 	manager.sessionStorage.Add(sessionInstance)
 	return sessionInstance, nil
@@ -153,4 +165,8 @@ func (manager *Manager) createSession(consumerID identity.Identity, config Servi
 	sessionInstance.ConsumerID = consumerID
 	sessionInstance.Config = config
 	return
+}
+
+func (manager *Manager) notifyNATPinger(requestConfig json.RawMessage) {
+	manager.natPingerChan() <- requestConfig
 }

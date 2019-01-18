@@ -19,7 +19,8 @@ package service
 
 import (
 	"encoding/json"
-	"errors"
+
+	"github.com/pkg/errors"
 
 	log "github.com/cihub/seelog"
 	"github.com/mysteriumnetwork/go-openvpn/openvpn"
@@ -50,6 +51,7 @@ type Manager struct {
 	natService nat.NATService
 
 	sessionConfigNegotiatorFactory SessionConfigNegotiatorFactory
+	consumerConfig                 openvpn_service.ConsumerConfig
 
 	vpnServerConfigFactory   ServerConfigFactory
 	vpnServiceConfigProvider session.ConfigNegotiator
@@ -102,14 +104,19 @@ func (manager *Manager) Stop() error {
 	return nil
 }
 
-// ProvideConfig provides the configuration to end consumer
-func (manager *Manager) ProvideConfig(publicKey json.RawMessage) (session.ServiceConfiguration, session.DestroyCallback, error) {
+// ProvideConfig takes session creation config from end consumer and provides the service configuration to the end consumer
+func (manager *Manager) ProvideConfig(config json.RawMessage) (session.ServiceConfiguration, session.DestroyCallback, error) {
 	if manager.vpnServiceConfigProvider == nil {
 		log.Info(logPrefix, "Config provider not initialized")
 		return nil, nil, errors.New("Config provider not initialized")
 	}
-
-	return manager.vpnServiceConfigProvider.ProvideConfig(publicKey)
+	var c openvpn_service.ConsumerConfig
+	error := json.Unmarshal(config, c)
+	if error != nil {
+		return nil, nil, errors.Wrap(error, "parsing consumer config failed")
+	}
+	manager.consumerConfig = c
+	return manager.vpnServiceConfigProvider.ProvideConfig(config)
 }
 
 func vpnStateCallback(state openvpn.State) {

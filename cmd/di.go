@@ -18,8 +18,11 @@
 package cmd
 
 import (
+	"encoding/json"
 	"path/filepath"
 	"time"
+
+	"github.com/mysteriumnetwork/node/nat"
 
 	"github.com/asaskevich/EventBus"
 	log "github.com/cihub/seelog"
@@ -98,6 +101,8 @@ type Dependencies struct {
 	ServiceRunner         *service.Runner
 	ServiceRegistry       *service.Registry
 	ServiceSessionStorage *session.StorageMemory
+
+	NATPinger *nat.Pinger
 }
 
 // Bootstrap initiates all container dependencies
@@ -125,6 +130,7 @@ func (di *Dependencies) Bootstrap(nodeOptions node.Options) error {
 
 	di.bootstrapIdentityComponents(nodeOptions)
 	di.bootstrapLocationComponents(nodeOptions.Location, nodeOptions.Directories.Config)
+	di.bootstrapNATComponents(nodeOptions)
 	di.bootstrapNodeComponents(nodeOptions)
 
 	di.registerConnections(nodeOptions)
@@ -275,13 +281,14 @@ func (di *Dependencies) bootstrapNodeComponents(nodeOptions node.Options) {
 
 	httpAPIServer := tequilapi.NewServer(nodeOptions.TequilapiAddress, nodeOptions.TequilapiPort, router)
 
-	di.Node = node.NewNode(di.ConnectionManager, httpAPIServer, di.LocationOriginal)
+	di.Node = node.NewNode(di.ConnectionManager, httpAPIServer, di.LocationOriginal, di.NATPinger.Start)
 }
 
 func newSessionManagerFactory(
 	proposal market.ServiceProposal,
 	sessionStorage *session.StorageMemory,
 	promiseHandler func(dialog communication.Dialog) session.PromiseProcessor,
+	natPingerChan func() chan json.RawMessage,
 ) session.ManagerFactory {
 	return func(dialog communication.Dialog) *session.Manager {
 		return session.NewManager(
@@ -289,6 +296,7 @@ func newSessionManagerFactory(
 			session.GenerateUUID,
 			sessionStorage,
 			promiseHandler(dialog),
+			natPingerChan,
 		)
 	}
 }
@@ -366,4 +374,8 @@ func (di *Dependencies) bootstrapLocationComponents(options node.OptionsLocation
 
 	di.LocationDetector = location.NewDetector(di.IPResolver, di.LocationResolver)
 	di.LocationOriginal = location.NewLocationCache(di.LocationDetector)
+}
+
+func (di *Dependencies) bootstrapNATComponents(options node.Options) {
+	di.NATPinger = nat.NewPingerFactory(options)
 }

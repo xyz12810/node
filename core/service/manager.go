@@ -46,11 +46,20 @@ type Service interface {
 	ProvideConfig(publicKey json.RawMessage) (session.ServiceConfiguration, session.DestroyCallback, error)
 }
 
+// NATPinger
+type NATPinger interface {
+	Bind(options Options) error
+	WaitForHole() error
+}
+
 // DialogWaiterFactory initiates communication channel which waits for incoming dialogs
 type DialogWaiterFactory func(providerID identity.Identity, serviceType string) (communication.DialogWaiter, error)
 
 // DialogHandlerFactory initiates instance which is able to handle incoming dialogs
 type DialogHandlerFactory func(market.ServiceProposal, session.ConfigNegotiator) communication.DialogHandler
+
+// WaitForNATHole blocks until NAT hole is punched towards consumer through local NAT
+type WaitForNATHole func() error
 
 // NewManager creates new instance of pluggable services manager
 func NewManager(
@@ -59,6 +68,7 @@ func NewManager(
 	dialogWaiterFactory DialogWaiterFactory,
 	dialogHandlerFactory DialogHandlerFactory,
 	discoveryService *registry.Discovery,
+	natPinger NATPinger,
 ) *Manager {
 	return &Manager{
 		identityHandler:      identityLoader,
@@ -66,6 +76,7 @@ func NewManager(
 		dialogWaiterFactory:  dialogWaiterFactory,
 		dialogHandlerFactory: dialogHandlerFactory,
 		discovery:            discoveryService,
+		natPinger:            natPinger,
 	}
 }
 
@@ -81,9 +92,11 @@ type Manager struct {
 	service        Service
 
 	discovery *registry.Discovery
+
+	natPinger NATPinger
 }
 
-// Start starts service - does not block
+// Start starts service - it does block
 func (manager *Manager) Start(options Options) (err error) {
 	loadIdentity := identity_selector.NewLoader(manager.identityHandler, options.Identity, options.Passphrase)
 	providerID, err := loadIdentity()
@@ -114,6 +127,10 @@ func (manager *Manager) Start(options Options) (err error) {
 	}
 
 	manager.discovery.Start(providerID, proposal)
+
+	// block until NATPinger punches the hole in NAT for first incoming connect or continues if service not behind NAT
+	manager.natPinger.Bind(options)
+	manager.natPinger.WaitForHole()
 
 	err = manager.service.Serve(providerID)
 	manager.discovery.Wait()
