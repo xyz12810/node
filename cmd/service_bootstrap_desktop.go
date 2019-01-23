@@ -31,6 +31,7 @@ import (
 	identity_selector "github.com/mysteriumnetwork/node/identity/selector"
 	"github.com/mysteriumnetwork/node/market"
 	"github.com/mysteriumnetwork/node/market/proposals/registry"
+	"github.com/mysteriumnetwork/node/nat"
 	service_noop "github.com/mysteriumnetwork/node/services/noop"
 	service_openvpn "github.com/mysteriumnetwork/node/services/openvpn"
 	openvpn_discovery "github.com/mysteriumnetwork/node/services/openvpn/discovery"
@@ -81,10 +82,9 @@ func (di *Dependencies) bootstrapServiceOpenvpn(nodeOptions node.Options) {
 		currentLocation := market.Location{Country: location.Country}
 		transportOptions := serviceOptions.Options.(openvpn_service.Options)
 
-		// di.NATPinger = nat.NewPingerFactory(openvpn_service.Options)
-
 		proposal := openvpn_discovery.NewServiceProposalWithLocation(currentLocation, transportOptions.OpenvpnProtocol)
-		return openvpn_service.NewManager(nodeOptions, transportOptions, location.PubIP, location.OutIP, location.Country, di.ServiceSessionStorage), proposal, nil
+		natService := nat.NewService()
+		return openvpn_service.NewManager(nodeOptions, transportOptions, location.PubIP, location.OutIP, location.Country, di.ServiceSessionStorage, natService, di.NATPinger), proposal, nil
 	}
 
 	di.ServiceRegistry.Register(service_openvpn.ServiceType, createService)

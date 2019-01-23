@@ -22,7 +22,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/mysteriumnetwork/node/nat"
+	"github.com/mysteriumnetwork/node/nat/traversal"
 
 	"github.com/asaskevich/EventBus"
 	log "github.com/cihub/seelog"
@@ -102,7 +102,7 @@ type Dependencies struct {
 	ServiceRegistry       *service.Registry
 	ServiceSessionStorage *session.StorageMemory
 
-	NATPinger *nat.Pinger
+	NATPinger *traversal.Pinger
 }
 
 // Bootstrap initiates all container dependencies
@@ -130,7 +130,7 @@ func (di *Dependencies) Bootstrap(nodeOptions node.Options) error {
 
 	di.bootstrapIdentityComponents(nodeOptions)
 	di.bootstrapLocationComponents(nodeOptions.Location, nodeOptions.Directories.Config)
-	di.bootstrapNATComponents(nodeOptions)
+	di.bootstrapNATComponents()
 	di.bootstrapNodeComponents(nodeOptions)
 
 	di.registerConnections(nodeOptions)
@@ -268,6 +268,7 @@ func (di *Dependencies) bootstrapNodeComponents(nodeOptions node.Options) {
 		promiseIssuerFactory,
 		di.ConnectionRegistry.CreateConnection,
 		di.EventBus,
+		di.NATPinger,
 	)
 
 	router := tequilapi.NewAPIRouter()
@@ -376,6 +377,6 @@ func (di *Dependencies) bootstrapLocationComponents(options node.OptionsLocation
 	di.LocationOriginal = location.NewLocationCache(di.LocationDetector)
 }
 
-func (di *Dependencies) bootstrapNATComponents(options node.Options) {
-	di.NATPinger = nat.NewPingerFactory(options)
+func (di *Dependencies) bootstrapNATComponents() {
+	di.NATPinger = traversal.NewPingerFactory()
 }
