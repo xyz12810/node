@@ -102,13 +102,16 @@ func (manager *Manager) Serve(providerID identity.Identity) (err error) {
 
 	// block until NATPinger punches the hole in NAT for first incoming connect or continues if service not behind NAT
 	manager.natPinger.BindProducer(manager.serviceOptions.OpenvpnPort)
-	manager.natPinger.WaitForHole()
 
-	if err = manager.vpnServer.Start(); err != nil {
-		return
+	for {
+		manager.natPinger.WaitForHole()
+
+		if err = manager.vpnServer.Start(); err != nil {
+			return
+		}
+		manager.vpnServer.Wait()
 	}
-	// TODO: we need to stop server after NAT client exists
-	return manager.vpnServer.Wait()
+	return
 }
 
 // Stop stops service

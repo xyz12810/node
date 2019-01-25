@@ -42,6 +42,7 @@ type ProcessBasedConnectionFactory struct {
 	runtimeDirectory      string
 	originalLocationCache location.Cache
 	signerFactory         identity.SignerFactory
+	lastSessionShutdown   chan bool
 }
 
 // NewProcessBasedConnectionFactory creates a new ProcessBasedConnectionFactory
@@ -49,6 +50,7 @@ func NewProcessBasedConnectionFactory(
 	openvpnBinary, configDirectory, runtimeDirectory string,
 	originalLocationCache location.Cache,
 	signerFactory identity.SignerFactory,
+	lastSessionShutdown chan bool,
 ) *ProcessBasedConnectionFactory {
 	return &ProcessBasedConnectionFactory{
 		openvpnBinary:         openvpnBinary,
@@ -56,6 +58,7 @@ func NewProcessBasedConnectionFactory(
 		runtimeDirectory:      runtimeDirectory,
 		originalLocationCache: originalLocationCache,
 		signerFactory:         signerFactory,
+		lastSessionShutdown:   lastSessionShutdown,
 	}
 }
 
@@ -87,7 +90,7 @@ func (op *ProcessBasedConnectionFactory) Create(stateChannel connection.StateCha
 		stateMiddleware := op.newStateMiddleware(options.SessionID, signer, options, stateChannel)
 		authMiddleware := op.newAuthMiddleware(options.SessionID, signer)
 		byteCountMiddleware := op.newBytecountMiddleware(statisticsChannel)
-		proc := openvpn.CreateNewProcess(op.openvpnBinary, vpnClientConfig.GenericConfig, stateMiddleware, byteCountMiddleware, authMiddleware)
+		proc := openvpn.CreateNewProcess(op.openvpnBinary, vpnClientConfig.GenericConfig, op.lastSessionShutdown, stateMiddleware, byteCountMiddleware, authMiddleware)
 		return proc, nil
 	}
 

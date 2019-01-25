@@ -20,6 +20,7 @@ package session
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"sync"
 
 	"github.com/mysteriumnetwork/node/identity"
@@ -71,13 +72,15 @@ func NewManager(
 	sessionStorage Storage,
 	promiseProcessor PromiseProcessor,
 	natPingerChan func() chan json.RawMessage,
+	lastSessionShutdown chan bool,
 ) *Manager {
 	return &Manager{
-		currentProposal:  currentProposal,
-		generateID:       idGenerator,
-		sessionStorage:   sessionStorage,
-		promiseProcessor: promiseProcessor,
-		natPingerChan:    natPingerChan,
+		currentProposal:     currentProposal,
+		generateID:          idGenerator,
+		sessionStorage:      sessionStorage,
+		promiseProcessor:    promiseProcessor,
+		natPingerChan:       natPingerChan,
+		lastSessionShutdown: lastSessionShutdown,
 
 		creationLock: sync.Mutex{},
 	}
@@ -85,12 +88,13 @@ func NewManager(
 
 // Manager knows how to start and provision session
 type Manager struct {
-	currentProposal  market.ServiceProposal
-	generateID       IDGenerator
-	provideConfig    ConfigProvider
-	sessionStorage   Storage
-	promiseProcessor PromiseProcessor
-	natPingerChan    func() chan json.RawMessage
+	currentProposal     market.ServiceProposal
+	generateID          IDGenerator
+	provideConfig       ConfigProvider
+	sessionStorage      Storage
+	promiseProcessor    PromiseProcessor
+	natPingerChan       func() chan json.RawMessage
+	lastSessionShutdown chan bool
 
 	creationLock sync.Mutex
 }
@@ -142,6 +146,12 @@ func (manager *Manager) Destroy(consumerID identity.Identity, sessionID string) 
 
 	if sessionInstance.ConsumerID != consumerID {
 		return ErrorWrongSessionOwner
+	}
+
+	if sessionInstance.Last {
+		log.Print("last session destroy requested - stopping service executable")
+		manager.lastSessionShutdown <- true
+		log.Print("executable shutdown on last session triggered")
 	}
 
 	err := manager.promiseProcessor.Stop()

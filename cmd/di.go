@@ -102,7 +102,8 @@ type Dependencies struct {
 	ServiceRegistry       *service.Registry
 	ServiceSessionStorage *session.StorageMemory
 
-	NATPinger *traversal.Pinger
+	NATPinger           *traversal.Pinger
+	LastSessionShutdown chan bool
 }
 
 // Bootstrap initiates all container dependencies
@@ -156,6 +157,7 @@ func (di *Dependencies) registerOpenvpnConnection(nodeOptions node.Options) {
 		nodeOptions.Directories.Runtime,
 		di.LocationOriginal,
 		di.SignerFactory,
+		di.LastSessionShutdown,
 	)
 	di.ConnectionRegistry.Register(service_openvpn.ServiceType, connectionFactory)
 }
@@ -290,6 +292,7 @@ func newSessionManagerFactory(
 	sessionStorage *session.StorageMemory,
 	promiseHandler func(dialog communication.Dialog) session.PromiseProcessor,
 	natPingerChan func() chan json.RawMessage,
+	lastSessionShutdown chan bool,
 ) session.ManagerFactory {
 	return func(dialog communication.Dialog) *session.Manager {
 		return session.NewManager(
@@ -298,6 +301,7 @@ func newSessionManagerFactory(
 			sessionStorage,
 			promiseHandler(dialog),
 			natPingerChan,
+			lastSessionShutdown,
 		)
 	}
 }
@@ -379,4 +383,5 @@ func (di *Dependencies) bootstrapLocationComponents(options node.OptionsLocation
 
 func (di *Dependencies) bootstrapNATComponents() {
 	di.NATPinger = traversal.NewPingerFactory()
+	di.LastSessionShutdown = make(chan bool)
 }

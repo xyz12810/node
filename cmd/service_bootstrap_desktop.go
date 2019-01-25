@@ -84,7 +84,7 @@ func (di *Dependencies) bootstrapServiceOpenvpn(nodeOptions node.Options) {
 
 		proposal := openvpn_discovery.NewServiceProposalWithLocation(currentLocation, transportOptions.OpenvpnProtocol)
 		natService := nat.NewService()
-		return openvpn_service.NewManager(nodeOptions, transportOptions, location.PubIP, location.OutIP, location.Country, di.ServiceSessionStorage, natService, di.NATPinger), proposal, nil
+		return openvpn_service.NewManager(nodeOptions, transportOptions, location.PubIP, location.OutIP, location.Country, di.ServiceSessionStorage, natService, di.NATPinger, di.LastSessionShutdown), proposal, nil
 	}
 
 	di.ServiceRegistry.Register(service_openvpn.ServiceType, createService)
@@ -135,7 +135,7 @@ func (di *Dependencies) bootstrapServiceComponents(nodeOptions node.Options) {
 			}
 			return &promise_noop.FakePromiseEngine{}
 		}
-		sessionManagerFactory := newSessionManagerFactory(proposal, di.ServiceSessionStorage, promiseHandler, di.NATPinger.PingTargetChan)
+		sessionManagerFactory := newSessionManagerFactory(proposal, di.ServiceSessionStorage, promiseHandler, di.NATPinger.PingTargetChan, di.LastSessionShutdown)
 		return session.NewDialogHandler(sessionManagerFactory, configProvider.ProvideConfig)
 	}
 

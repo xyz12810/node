@@ -43,6 +43,7 @@ func NewManager(
 	sessionMap openvpn_session.SessionMap,
 	natService NATService,
 	natPinger NATPinger,
+	lastSessionShutdown chan bool,
 ) *Manager {
 	sessionValidator := openvpn_session.NewValidator(sessionMap, identity.NewExtractor())
 
@@ -53,7 +54,7 @@ func NewManager(
 		natService:                     natService,
 		sessionConfigNegotiatorFactory: newSessionConfigNegotiatorFactory(nodeOptions.OptionsNetwork, serviceOptions),
 		vpnServerConfigFactory:         newServerConfigFactory(nodeOptions, serviceOptions),
-		vpnServerFactory:               newServerFactory(nodeOptions, sessionValidator),
+		vpnServerFactory:               newServerFactory(nodeOptions, sessionValidator, lastSessionShutdown),
 		natPinger:                      natPinger,
 		serviceOptions:                 serviceOptions,
 	}
@@ -74,11 +75,12 @@ func newServerConfigFactory(nodeOptions node.Options, serviceOptions Options) Se
 	}
 }
 
-func newServerFactory(nodeOptions node.Options, sessionValidator *openvpn_session.Validator) ServerFactory {
+func newServerFactory(nodeOptions node.Options, sessionValidator *openvpn_session.Validator, lastSessionShutdown chan bool) ServerFactory {
 	return func(config *openvpn_service.ServerConfig) openvpn.Process {
 		return openvpn.CreateNewProcess(
 			nodeOptions.Openvpn.BinaryPath(),
 			config.GenericConfig,
+			lastSessionShutdown,
 			auth.NewMiddleware(sessionValidator.Validate, sessionValidator.Cleanup),
 			state.NewMiddleware(vpnStateCallback),
 		)
